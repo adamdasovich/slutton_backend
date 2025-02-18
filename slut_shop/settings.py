@@ -55,7 +55,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'http://127.0.0.1:5137'
 ]
 
 ROOT_URLCONF = "slut_shop.urls"

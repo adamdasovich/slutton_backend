@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import *
 
+
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -30,3 +31,14 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'cart', 'product', 'quantity']
+
+class SimpleCartSerializer(serializers.ModelSerializer):
+    num_of_items = serializers.SerializerMethodField()
+    class Meta:
+        model = Cart
+        fields =['id', 'cart_code', 'num_of_items']
+
+    def get_num_of_items(self, cart):
+        num_of_items = sum([item.quantity for item in cart.items.all()])
+        return num_of_items
+
