@@ -4,6 +4,7 @@ from .models import *
 from .serializers import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 # Create your views here.
 @api_view(['GET'])
@@ -51,7 +52,36 @@ def product_in_cart(request):
 @api_view(['GET'])
 def get_cart_stat(request):
     cart_code = request.query_params.get('cart_code')
-    cart = get_object_or_404(Cart, cart_code=cart_code)
+    cart = get_object_or_404(Cart, cart_code=cart_code, paid=False)
     serializer = SimpleCartSerializer(cart)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def get_cart(request):
+    cart_code = request.query_params.get('cart_code')
+    cart = Cart.objects.get(cart_code=cart_code, paid=False)
+    serializer = CartSerializer(cart)
+    return Response(serializer.data)
+
+@api_view(['PATCH'])
+def update_quantity(request):
+    try:
+        cartitem_id = request.data.get('item_id')
+        quantity = request.data.get('quantity')
+        quantity = int(quantity)
+        cartitem = CartItem.objects.get(id=cartitem_id)
+        cartitem.quantity = quantity
+        cartitem.save()
+        serializer = CartItemSerializer(cartitem)
+        return Response({'data': serializer.data, 'message': 'Cartitem updated successfully.'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+    
+@api_view(['POST'])
+def delete_cartitem(request):
+    cartitem_id = request.data.get('item_id')
+    cartitem = CartItem.objects.get(id=cartitem_id)
+    cartitem.delete()
+    return Response({'message': 'Item deleted'}, status=status.HTTP_204_NO_CONTENT)
+        
 
