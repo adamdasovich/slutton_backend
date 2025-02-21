@@ -90,5 +90,12 @@ def delete_cartitem(request):
 def get_username(request):
     user = request.user
     return Response({'username': user.username})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_info(request):
+    user = request.user
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
         
 
