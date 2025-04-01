@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -65,7 +67,50 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = ['id', 'quantity', 'product']
 
+class NewCartItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    order_id = serializers.SerializerMethodField()
+    order_date = serializers.SerializerMethodField()
+    class Meta:
+        fields = ['id', 'product', 'quantity', 'order_id', 'order_date']
+
+        def get_order_id(self, cartitem):
+            order_id = cartitem.cart.cart_code
+            return order_id
+        
+        def get_order_date(self, cartitem):
+            order_date = cartitem.cart.modified_at
+            return order_date
+
+
 class UserSerializer(serializers.ModelSerializer):
+    orders = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'city', 'state', 'address', 'phone']
+        fields = ['username', 'first_name', 'last_name', 'email', 'city', 'state', 'address', 'phone', 'orders']
+
+    def get_orders(self, user):
+        paid_carts = Cart.objects.filter(user=user, paid=True).prefetch_related('items__product')
+        orders = []
+        for cart in paid_carts:
+            order = {
+                'order_id': cart.cart_code,
+                'order_date': cart.modified_at,
+                'items': CartItemSerializer(cart.items.all(), many=True).data,
+            }
+            orders.append(order)
+        return orders
+
+# class UserSerializer(serializers.ModelSerializer):
+#     items = serializers.SerializerMethodField()
+#     class Meta:
+#         model = get_user_model()
+#         fields = ['username', 'first_name', 'last_name', 'email', 'city', 'state', 'address', 'phone', 'items']
+        
+#     def get_items(self, user):
+#         cartitems = CartItem.objects.filter(cart_user=user)[:10]
+#         serializer = NewCartItemSerializer(cartitems, many=True)
+#         return serializer.data
+
+    

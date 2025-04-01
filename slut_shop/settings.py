@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'slut_app',
     'slut_api',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'http://127.0.0.1:5137'
+    'http://127.0.0.1:5174'
 ]
 
 ROOT_URLCONF = "slut_shop.urls"
@@ -153,3 +154,7 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60)
 }
+
+PAYPAL_CLIENT_ID = 'AbWNF9QGGLjy8OFa98acg9w3DcFR6yiuZEbsw658sBh_fv-qk_v3nPx0ppys4G5sIKXjGkvGtqe9F2QD'
+PAYPAL_CLIENT_SECRET = 'EAA4AZNoSwpzEuVbsLfum0dYyZIFDTM2LmciVQpW-_hahfxqtXdV46BRo9_-rA7n56UpYwPMPuxVYujs'
+PAYPAL_MODE = 'sandbox'
