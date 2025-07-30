@@ -12,6 +12,8 @@ import paypalrestsdk
 import uuid
 from decimal import Decimal
 import requests
+from django.http import HttpResponse
+import os
 
 
 BASE_URL = 'http://localhost:5173'
@@ -21,6 +23,9 @@ paypalrestsdk.configure({
     "client_id": settings.PAYPAL_CLIENT_ID,
     "client_secret": settings.PAYPAL_CLIENT_SECRET
 })
+
+def index(request):
+    return render(request, 'index.html')
 
 # Create your views here.
 @api_view(['GET'])
