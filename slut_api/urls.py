@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include, re_path
 from . import views
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -21,5 +21,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register', views.UserRegistrationView.as_view(), name='register'),
     path('initiate_paypal_payment/', views.initiate_paypal_payment, name='initial_paypal_payment'),
-    path('paypal_payment_callback/', views.paypal_payment_callback, name='paypal_payment_callback')
+    path('paypal_payment_callback/', views.paypal_payment_callback, name='paypal_payment_callback'),
 ]

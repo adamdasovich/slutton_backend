@@ -15,17 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 import slut_api.urls
 import slut_app.urls
 from django.conf.urls.static import static
 from django.conf import settings
+import slut_api.views
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', include(slut_api.urls)),
-    path('', include(slut_app.urls))   
+    path('api/', include(slut_api.urls)),
+    path('api/', include(slut_app.urls)),
+    re_path(r'^(?!api/).*$', slut_api.views.index, name='index')   
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
